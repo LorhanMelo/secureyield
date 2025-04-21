@@ -1,5 +1,7 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
-import { Collection } from 'mongodb';
+import {Collection, ObjectId} from 'mongodb';
+import {app} from "@/app";
+import { UserSchema } from '@/types/user';
 
 interface LoginRequest {
   email: string;
@@ -13,7 +15,7 @@ interface RegisterRequest {
 }
 
 export default async function (fastify: FastifyInstance) {
-  const users: Collection = fastify.mongo.db.collection('users');
+  const users = fastify.mongo.db.collection<UserSchema>('users');
 
   // Registrar novo usuário
   fastify.post<{ Body: RegisterRequest }>(
@@ -44,7 +46,7 @@ export default async function (fastify: FastifyInstance) {
         });
 
         // Gerar token JWT
-        const token = fastify.jwt.sign({
+        const token = app.jwt.sign({
           id: result.insertedId.toString(),
           email,
           role: 'user'
@@ -116,8 +118,7 @@ export default async function (fastify: FastifyInstance) {
     async (request: FastifyRequest, reply: FastifyReply) => {
       try {
         const userId = (request as any).user.id;
-        const user = await users.findOne({ _id: new fastify.mongo.client.ObjectId(userId) });
-
+        const user = await users.findOne({ _id: new ObjectId(userId) });
         if (!user) {
           return reply.status(404).send({ error: 'Usuário não encontrado' });
         }

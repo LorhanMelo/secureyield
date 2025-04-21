@@ -1,28 +1,22 @@
-import fastify, { FastifyInstance } from 'fastify';
+import fastify, { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { config } from './config/config';
-import mongodbPlugin from './plugins/mongodb';
+import mongodbPlugin, {MongoDBPluginOptions} from './plugins/mongodb';
+import jwt from '@fastify/jwt';
 
 // Cria a instância do Fastify
 const app: FastifyInstance = fastify({
-  logger: {
-    level: config.logLevel,
-    transport: config.isDevelopment
-      ? {
-          target: 'pino-pretty',
-          options: {
-            translateTime: 'HH:MM:ss Z',
-            ignore: 'pid,hostname',
-          },
-        }
-      : undefined,
-  },
+  logger: true
+});
+
+app.register(jwt, {
+  secret: 'your_jwt_secret_key_here'
 });
 
 // Registra plugins
 app.register(mongodbPlugin, {
   uri: config.mongodb.uri,
   dbName: config.mongodb.dbName,
-});
+} as MongoDBPluginOptions);
 
 // Registra rotas
 const registerRoutes = async () => {

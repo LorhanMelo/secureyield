@@ -1,5 +1,6 @@
 import { FastifyInstance } from 'fastify';
-import { Collection } from 'mongodb';
+import {Collection, ObjectId} from 'mongodb';
+import { UserSchema } from '@/types/user';
 
 interface UserUpdateRequest {
   name?: string;
@@ -8,7 +9,7 @@ interface UserUpdateRequest {
 }
 
 export default async function (fastify: FastifyInstance) {
-  const users: Collection = fastify.mongo.db.collection('users');
+  const users = fastify.mongo.db.collection<UserSchema>('users');
 
   // Obter todos os usuários (apenas para admin)
   fastify.get(
@@ -48,7 +49,7 @@ export default async function (fastify: FastifyInstance) {
         }
 
         const user = await users.findOne(
-          { _id: new fastify.mongo.client.ObjectId(id) },
+          { _id: new ObjectId(id) },
           { projection: { password: 0 } }
         );
 
@@ -95,7 +96,7 @@ export default async function (fastify: FastifyInstance) {
         }
 
         const result = await users.updateOne(
-          { _id: new fastify.mongo.client.ObjectId(id) },
+          { _id: new ObjectId(id) },
           { $set: updateData }
         );
 
@@ -125,7 +126,7 @@ export default async function (fastify: FastifyInstance) {
           return reply.status(403).send({ error: 'Acesso negado' });
         }
 
-        const result = await users.deleteOne({ _id: new fastify.mongo.client.ObjectId(id) });
+        const result = await users.deleteOne({ _id: new ObjectId(id) });
 
         if (result.deletedCount === 0) {
           return reply.status(404).send({ error: 'Usuário não encontrado' });

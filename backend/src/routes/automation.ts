@@ -1,5 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import { Collection } from 'mongodb';
+import { ObjectId } from 'mongodb';
 import { spawn } from 'child_process';
 import path from 'path';
 import fs from 'fs';
@@ -108,7 +109,7 @@ export default async function (fastify: FastifyInstance) {
 
       try {
         const automationLog = await automationLogs.findOne({
-          _id: new fastify.mongo.client.ObjectId(id)
+          _id: new ObjectId(id)
         });
 
         if (!automationLog) {

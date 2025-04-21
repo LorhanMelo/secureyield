@@ -1,51 +1,27 @@
-import { FastifyInstance, FastifyPluginOptions } from 'fastify';
-import { FastifyJWT } from 'fastify-jwt';
+import { FastifyPluginAsync } from 'fastify';
 import fp from 'fastify-plugin';
 import { config } from '../config/config';
+import fastifyJwt from '@fastify/jwt';
 
-export default fp(async function (
-  fastify: FastifyInstance,
-  options: FastifyPluginOptions,
-  done: (err?: Error) => void
-) {
+const authPlugin: FastifyPluginAsync = async (fastify) => {
   // Registra o plugin JWT
-  fastify.register(require('fastify-jwt'), {
+  fastify.register(fastifyJwt, {
     secret: config.jwt.secret,
     sign: {
-      expiresIn: config.jwt.expiresIn
-    }
+      expiresIn: config.jwt.expiresIn,
+    },
   });
 
   // Adiciona decorador para verificar autenticação
-  fastify.decorate('authenticate', async (request: any, reply: any) => {
+  fastify.decorate('authenticate', async (request, reply) => {
     try {
       await request.jwtVerify();
     } catch (err) {
       reply.status(401).send({ error: 'Não autorizado' });
     }
   });
+};
 
-  done();
+export default fp(authPlugin, {
+  name: 'auth-plugin',
 });
-
-// Declaração de tipos para TypeScript
-declare module 'fastify' {
-  interface FastifyInstance {
-    authenticate: (request: any, reply: any) => Promise<void>;
-  }
-}
-
-declare module 'fastify-jwt' {
-  interface FastifyJWT {
-    payload: {
-      id: string;
-      email: string;
-      role: string;
-    };
-    user: {
-      id: string;
-      email: string;
-      role: string;
-    };
-  }
-}
