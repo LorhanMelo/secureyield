@@ -1,0 +1,17 @@
+{
+  "scripts": {
+    "dev": "ts-node-dev -r tsconfig-paths/register src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js"
+  },
+  "dependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/mongoose": "^5.11.96",
+    "bcrypt": "^5.1.1",
+    "mongoose": "^8.13.2",
+    "tsconfig-paths": "^4.2.0"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2"
+  }
+}
