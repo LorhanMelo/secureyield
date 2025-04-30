@@ -2,60 +2,63 @@ import fastify, { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
 import { config } from './config/config';
 import mongodbPlugin, {MongoDBPluginOptions} from './plugins/mongodb';
 import jwt from '@fastify/jwt';
+import formBody from '@fastify/formbody';
 
-// Cria a instância do Fastify
+
 const app: FastifyInstance = fastify({
-  logger: true
-});
-
-app.register(jwt, {
-  secret: 'your_jwt_secret_key_here'
+  logger: true,
+  bodyLimit: 1048576,
 });
 
 // Registra plugins
+app.register(formBody); //
+app.register(jwt, {
+  secret: 'Ad09062003@12'
+});
 app.register(mongodbPlugin, {
   uri: config.mongodb.uri,
   dbName: config.mongodb.dbName,
 } as MongoDBPluginOptions);
 
-// Registra rotas
 const registerRoutes = async () => {
-  // Registra rotas de autenticação
   app.register(import('./routes/auth'), { prefix: '/api/auth' });
-  
-  // Registra rotas de usuários
   app.register(import('./routes/users'), { prefix: '/api/users' });
-  
-  // Registra rotas de automação
   app.register(import('./routes/automation'), { prefix: '/api/automation' });
 };
 
-// Inicializa o aplicativo
 const initialize = async () => {
   try {
-    // Registra rotas
     await registerRoutes();
-    
-    // Adiciona hook para CORS
+
     app.addHook('onRequest', (request, reply, done) => {
+      reply.header('Content-Type', 'application/json');
       reply.header('Access-Control-Allow-Origin', config.corsOrigin);
       reply.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-      reply.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+      reply.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Origin'); // <-- Adicionado Origin
       reply.header('Access-Control-Allow-Credentials', 'true');
-      
+
       if (request.method === 'OPTIONS') {
         reply.status(204).send();
         return;
       }
-      
+
       done();
     });
-    
-    // Adiciona rota de verificação de saúde
+
     app.get('/health', async () => {
       return { status: 'ok', timestamp: new Date().toISOString() };
     });
-    
+
+    app.setErrorHandler((error, request, reply) => {
+      app.log.error(error);
+      reply
+          .status(error.statusCode || 500)
+          .send({
+            error: error.message || 'Erro interno do servidor',
+            ...(process.env.NODE_ENV === 'development' && { stack: error.stack })
+          });
+    });
+
     return app;
   } catch (err) {
     app.log.error(err);

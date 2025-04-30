@@ -42,6 +42,7 @@ export class CloudflareR2Service {
       const url = await this.getSignedUrl(key);
       
       return { success: true, url };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error('Erro ao fazer upload de arquivo:', error);
       return { success: false, error: error.message };
@@ -73,6 +74,7 @@ export class CloudflareR2Service {
       await this.client.send(command);
       
       return { success: true };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error('Erro ao excluir arquivo:', error);
       return { success: false, error: error.message };

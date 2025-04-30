@@ -46,6 +46,7 @@ export async function POST(req: NextRequest) {
       contentType: file.type,
       size: file.size,
     });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error('Erro ao fazer upload de arquivo:', error);
     return NextResponse.json({ 

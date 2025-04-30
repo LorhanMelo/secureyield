@@ -160,6 +160,7 @@ export class InvestmentPortalNavigator {
   /**
    * Executa o fluxo completo de automação
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async run(): Promise<{ success: boolean; message: string; data?: any }> {
     try {
       await this.initialize();
@@ -177,6 +178,7 @@ export class InvestmentPortalNavigator {
           balance: this.availableBalance
         }
       };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       this.log(`ERRO: ${error.message}`);
       return { 

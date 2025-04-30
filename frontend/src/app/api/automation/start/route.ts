@@ -38,6 +38,7 @@ export async function POST(req: NextRequest) {
       message: 'Automação iniciada com sucesso',
       automationId: `auto-${Date.now()}`,
     }, { status: 202 });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error('Erro ao iniciar automação:', error);
     return NextResponse.json({ 

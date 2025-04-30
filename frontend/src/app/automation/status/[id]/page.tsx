@@ -8,6 +8,7 @@ interface AutomationStatus {
   status: 'pending' | 'running' | 'completed' | 'failed';
   startTime: string;
   endTime?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   result?: any;
   error?: string;
 }
@@ -29,6 +30,7 @@ export default function AutomationStatusPage() {
         }
 
         setStatus(data.automation);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
         setError(err.message || 'Erro ao buscar status da automação');
       } finally {

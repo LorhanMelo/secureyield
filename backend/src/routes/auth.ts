@@ -20,6 +20,19 @@ export default async function (fastify: FastifyInstance) {
   // Registrar novo usuário
   fastify.post<{ Body: RegisterRequest }>(
     '/register',
+      {
+        schema: { // <-- Adicionado schema
+          body: {
+            type: 'object',
+            required: ['email', 'password', 'name'],
+            properties: {
+              email: { type: 'string', format: 'email' },
+              password: { type: 'string', minLength: 6 },
+              name: { type: 'string', minLength: 3 }
+            }
+          }
+        }
+      },
     async (request, reply) => {
       const { email, password, name } = request.body;
 
@@ -71,6 +84,18 @@ export default async function (fastify: FastifyInstance) {
   // Login de usuário
   fastify.post<{ Body: LoginRequest }>(
     '/login',
+      {
+        schema: { // <-- Adicionado schema
+          body: {
+            type: 'object',
+            required: ['email', 'password'],
+            properties: {
+              email: { type: 'string', format: 'email' },
+              password: { type: 'string' }
+            }
+          }
+        }
+      },
     async (request, reply) => {
       const { email, password } = request.body;
 
@@ -104,9 +129,13 @@ export default async function (fastify: FastifyInstance) {
           },
           token
         });
-      } catch (error) {
+      } catch (error: any) {
         fastify.log.error(error);
-        return reply.status(500).send({ error: 'Erro ao fazer login' });
+
+        return reply.status(500).send({
+          error: 'Erro ao fazer login',
+          details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
       }
     }
   );

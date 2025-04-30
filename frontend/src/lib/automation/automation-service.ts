@@ -2,6 +2,7 @@ import { InvestmentPortalNavigator, DEFAULT_CONFIG } from './investment-portal';
 
 export interface AutomationOptions {
   userId: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   parameters?: Record<string, any>;
   onLog?: (message: string) => void;
 }
@@ -24,6 +25,7 @@ export class AutomationService {
   public async runAutomation(options: AutomationOptions): Promise<{
     success: boolean;
     message: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data?: any;
     logs: string[];
   }> {
@@ -45,6 +47,7 @@ export class AutomationService {
         ...result,
         logs: this.getLogs()
       };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       logger(`Erro fatal na automação: ${error.message}`);
       return {

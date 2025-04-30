@@ -27,7 +27,7 @@ interface Config {
 
 // Configuração padrão
 export const config: Config = {
-  port: parseInt(process.env.PORT || '3001', 10),
+  port: parseInt(process.env.PORT || '3222', 10),
   host: process.env.HOST || '0.0.0.0',
   logLevel: process.env.LOG_LEVEL || 'info',
   isDevelopment: process.env.NODE_ENV !== 'production',

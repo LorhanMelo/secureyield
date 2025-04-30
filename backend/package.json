@@ -7,6 +7,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.787.0",
     "@aws-sdk/s3-request-presigner": "^3.787.0",
+    "@fastify/formbody": "^8.0.2",
     "@fastify/jwt": "^9.1.0",
     "@types/bcrypt": "^5.0.2",
     "@types/mongoose": "^5.11.96",

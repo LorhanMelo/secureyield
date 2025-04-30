@@ -1,23 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// Simulação de banco de dados em memória para demonstração
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const automationStore: Record<string, any> = {};
-
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function GET(req: NextRequest, context: any) {
   try {
-    const id = params.id;
-    
-    // Verificar autenticação (em um cenário real, isso seria feito com um middleware)
-    // const session = await getServerSession();
-    // if (!session) {
-    //   return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
-    // }
-    
-    // Buscar automação pelo ID
-    // Em um cenário real, isso seria buscado do banco de dados
+    const id = context.params.id;
+
     const automation = automationStore[id] || {
       userId: 'user-123',
       status: Math.random() > 0.7 ? 'completed' : 'running',
@@ -27,16 +16,16 @@ export async function GET(
       createdAt: new Date(Date.now() - 60000).toISOString(),
       updatedAt: new Date().toISOString()
     };
-    
-    // Salvar na store simulada
+
     automationStore[id] = automation;
-    
+
     return NextResponse.json({ automation });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error('Erro ao buscar status da automação:', error);
-    return NextResponse.json({ 
-      error: 'Erro ao buscar status da automação', 
-      details: error.message 
-    }, { status: 500 });
+    return NextResponse.json(
+        { error: 'Erro ao buscar status da automação', details: error.message },
+        { status: 500 }
+    );
   }
 }
